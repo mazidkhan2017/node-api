@@ -1,31 +1,40 @@
 const callServer = require("../../apiservices/api_executer");
 const jsonparser = require("../../../util/jsonparser")
-
-let news_api_key = "f6dc5ec1e08147cb8e10707f13e0fd5a"
-let weather_api_key = "284823ccf6217d4af0a93ee435725c01"
-
-exports.searchNews_ = (req, res) => {
-
-    var searchKey = ""
-    callServer(searchKey, "GET", apiResponse=>{
-
-    })
-};
+const news_jsonparser = require("../../../util/news_jsonparser")
+const constant = require("../../../app/constant/string_constant")
 
 exports.searchNews = (searchKey, res) => {
-    var queryparam = `${searchKey}&apiKey=${news_api_key}`
-      callServer.callAPi(queryparam, "GET", "NEWS", apiResponse=>{
-       console.log("Api Res-->>>"+JSON.stringify(apiResponse.data));
-       res(apiResponse.data);
-    })
+    var queryparam = `${searchKey}&apiKey=${constant.NEWS_API_KEY}`
+    try {
+        callServer.callAPi(queryparam, "GET", "NEWS", apiResponse=>{
+            news_jsonparser.newsjson(apiResponse.data, callback=>{
+              console.log("Parsed JSON Res-->>>"+JSON.stringify(callback));
+              res(callback);
+             }) 
+            // res(apiResponse.data);
+          })
+    } catch (error) {
+        var jsonobj = {statusCode:500, message:constant.SOME_THING_WRONG}
+        res(jsonobj);
+    } 
 };
 
 exports.fetchWeather = (searchKey, res) => {
-      callServer.callAPi(weather_api_key, "GET", "WEATHER", apiResponse=>{
-       jsonparser.weatherjson(apiResponse.data, callback=>{
-        console.log("Api Res-->>>"+JSON.stringify(callback));
-        res(callback);
-       }) 
-    })
-    
+    try {
+        callServer.callAPi(constant.WEATHER_API_KEY, "GET", "WEATHER", apiResponse=>{
+            if(apiResponse.data==='undefined' || apiResponse.data ===undefined){
+              var jsonobj = {statusCode:401, message:constant.INVALID_API_KEY}
+              res(jsonobj);
+            }
+            else{
+                  jsonparser.weatherjson(apiResponse.data, callback=>{
+                      // console.log("Parsed JSON Res-->>>"+JSON.stringify(callback));
+                  res(callback);
+              })  
+          } 
+      })
+    } catch (error) {
+        var jsonobj = {statusCode:500, message:constant.SOME_THING_WRONG}
+            res(jsonobj);
+    } 
 };

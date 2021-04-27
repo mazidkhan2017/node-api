@@ -1,6 +1,7 @@
 const User = require("../../../model/user");
 const service = require("../../services/news_service/search_news")
 const auth = require("../../auth/authutil")
+const constant = require("../../../app/constant/string_constant")
 
 // Create and Save a new User Api Implementation
 exports.create = (req, res) => {
@@ -8,7 +9,7 @@ exports.create = (req, res) => {
      // Validate request
     if (!req.body) {
         res.status(400).send({
-        message: "Content can not be empty!"
+        message: constant.CAN_NOT_EMPTY
         });
     }
 
@@ -26,7 +27,7 @@ exports.create = (req, res) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the User."
+          err.message || constant.SOME_THING_WRONG
       });
     else res.send(data);
   });
@@ -39,12 +40,12 @@ exports.login = (req, res) => {
           if (err.kind === "not_found") {
             res.status(404).send({
                 statusCode: 404,
-                message: `User not found `
+                message: constant.USER_NOT_FOUND
             });
           } else {
             res.status(500).send({
                 statusCode: 500,
-                message: "Error retrieving User "
+                message: constant.SOME_THING_WRONG
             });
           }
         } 
@@ -58,13 +59,12 @@ exports.login = (req, res) => {
 // Search news Api Implementation.
 exports.searchNews = (req, res) => {
     // Authenticate API with Token
-    var isAuth = auth.verifyToken(req.query.token) 
-    console.log("isAuth === "+isAuth)
+    var isAuth = auth.verifyToken(req.query.token)  
 
     if(isAuth === null){
         var data = {}
         data.status = 401
-        data.message = "Invalid token"
+        data.message = constant.INVALID_TOKEN
         res.send(data);
     }
     else{
@@ -87,25 +87,31 @@ exports.weather = (req, res) => {
 
 // Logout user Api Implementation
 exports.logout = (req, res) => {  
-  User.logout(req.body.email, req.body.password, (err, data) => {
-      if (err) {
+  try {
+    User.logout(req.body.email, req.body.password, (err, data) => {
+      if (err) { 
         if (err.kind === "not_found") {
           res.status(404).send({
               statusCode: 404,
-              message: `User not found `
+              message: constant.USER_NOT_FOUND
           });
         } else {
           res.status(500).send({
               statusCode: 500,
-              message: "Error retrieving User "
+              message: constant.SOME_THING_WRONG
           });
         }
       } 
       else
       {
-          res.send(data);
+        console.log("data==>>>>"+JSON.stringify(data))
+        res.send(data);
       }
     });
+  } catch (error) {
+    var jsonobj = {statusCode:500, message:constant.SOME_THING_WRONG}
+    res(jsonobj);
+  } 
 };
 
 // Retrieve all Users from the database.
@@ -114,7 +120,7 @@ exports.findAll = (req, res) => {
         if (err)
           res.status(500).send({
             message:
-              err.message || "Some error occurred while retrieving users."
+              err.message || constant.SOME_THING_WRONG
           });
         else res.send(data);
       });
