@@ -49,7 +49,8 @@ ________________________________________________________________________________
         ) 
 
 4. Run
-    A. node server.js
+    A. npm install --- To install all packages in local machine
+    B. node server.js
 
 5.  Test API on local
             Open your Postman and verify the sample-node-api is working by accessing:
