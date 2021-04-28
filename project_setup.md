@@ -37,8 +37,11 @@ ________________________________________________________________________________
     A. nodejs
     B. mysql
     C. express
+    
+3. Create Database
+     CREATE DATABASE test;
 
-3. mySql Table Query.
+4. mySql Table Query.
     A. CREATE TABLE IF NOT EXISTS `users` (
         id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
         name varchar(150) NOT NULL,
@@ -48,11 +51,11 @@ ________________________________________________________________________________
         islogin BOOLEAN DEFAULT false
         ) 
 
-4. Run
-    A. npm install --- To install all packages in local machine
-    B. node server.js
+5. Run
+   > A. npm install --- To install all packages in local machine
+   > B. node server.js
 
-5.  Test API on local
+6.  Test API on local
             Open your Postman and verify the sample-node-api is working by accessing:
                 1)      Url:      http://localhost:3000/signup   
                         Method:   POST
@@ -76,5 +79,5 @@ ________________________________________________________________________________
                 4)      Url:       http://localhost:3000/weather
                         Method:    GET
 
-5. Unit Test using supertest
+7. Unit Test using supertest
     A. npm test
